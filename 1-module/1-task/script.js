@@ -6,9 +6,6 @@ const app = new Vue({
         clickCount: 0
     },
     methods: {
-        getClickCount() {
-            return this.clickCount;
-        },
         clickHandler(e) {
             this.clickCount++;
         }
