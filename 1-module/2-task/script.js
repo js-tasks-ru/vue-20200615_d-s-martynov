@@ -63,6 +63,12 @@ export const app = new Vue({
     getMeetupFormattedDate() {
       const formatter = new Intl.DateTimeFormat();
       return formatter.format(this.meetupData.date);
+    },
+    agengaIconUrls() {
+      let result = {};
+      for (let key in agendaItemIcons)
+        result[key] = `/assets/icons/icon-${agendaItemIcons[key]}.svg`;
+      return result;
     }
 
   },
@@ -85,6 +91,5 @@ export const app = new Vue({
     getAgendaIcon(agenda) {
       return agenda && agenda.type ? `/assets/icons/icon-${agendaItemIcons[agenda.type]}.svg` : '';
     }
-
   }
 });

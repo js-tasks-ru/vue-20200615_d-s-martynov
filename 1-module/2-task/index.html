@@ -27,7 +27,7 @@
             <template v-for="agenda in meetupData.agenda">
               <div class="meetup-agenda__item">
                 <div class="meetup-agenda__item-col">
-                  <img class="icon" alt="icon" :src="getAgendaIcon(agenda)"/>
+                  <img class="icon" alt="icon" :src="agengaIconUrls[agenda.type]"/>
                 </div>
                 <div class="meetup-agenda__item-col">{{ `${agenda.startsAt} - ${agenda.endsAt}` }}</div>
                 <div class="meetup-agenda__item-col">
