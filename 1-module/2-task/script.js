@@ -48,19 +48,48 @@ export const app = new Vue({
   el: '#app',
 
   data: {
-    //
+    meetupId: MEETUP_ID,
+    meetupData: null
   },
 
   mounted() {
-    // Требуется получить данные митапа с API
+    this.fetchMeetup(this.meetupId);
   },
 
   computed: {
-    //
+    getCoverImageUrl() {
+      return getMeetupCoverLink(this.meetupData);
+    },
+    getMeetupFormattedDate() {
+      const formatter = new Intl.DateTimeFormat();
+      return formatter.format(this.meetupData.date);
+    },
+    agengaIconUrls() {
+      let result = {};
+      for (let key in agendaItemIcons)
+        result[key] = `/assets/icons/icon-${agendaItemIcons[key]}.svg`;
+      return result;
+    }
+
   },
 
   methods: {
-    // Получение данных с API предпочтительнее оформить отдельным методом,
-    // а не писать прямо в mounted()
-  },
+    fetchMeetup(meetupId) {
+      if (meetupId !== null && meetupId !== undefined) {
+        fetch(`${API_URL}/meetups/${meetupId}`, {
+          method: 'GET',
+        }).then(meetup => {
+          return meetup ? meetup.json() : null;
+        }).then(data => {
+          this.meetupData = data;
+        });
+      }
+    },
+    getAgendaTitle(agenda) {
+      return agenda && agenda.title ? agenda.title : agenda && agenda.type ? agendaItemTitles[agenda.type] : '';
+    },
+    getAgendaIcon(agenda) {
+      return agenda && agenda.type ? `/assets/icons/icon-${agendaItemIcons[agenda.type]}.svg` : '';
+    }
+  }
 });
