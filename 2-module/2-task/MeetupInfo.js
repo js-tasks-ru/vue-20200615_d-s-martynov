@@ -2,19 +2,40 @@ export const MeetupInfo = {
   template: `<ul class="info-list">
       <li>
         <img class="icon info-list__icon" alt="icon" src="/assets/icons/icon-user.svg" />
-        Организатор
+        {{ meetup.organizer }}
       </li>
       <li>
         <img class="icon info-list__icon" alt="icon" src="/assets/icons/icon-map.svg" />
-        Место
+        {{ meetup.place }}
       </li>
       <li>
         <img class="icon info-list__icon" alt="icon" src="/assets/icons/icon-cal-lg.svg" />
-        <time datetime="2020-01-01">1 янв. 2020</time>
+        <time datetime="">{{ getFormattedDate }}</time>
       </li>
     </ul>`,
 
-  // Пропсы
+  name: 'MeetupInfo',
 
-  // computed
+  props: {
+    meetup: {
+      type: Object,
+      required: true
+    }
+  },
+
+  computed: {
+    getFormattedDate() {
+      if (this.meetup) {
+        const formatter = new Intl.DateTimeFormat('en-us', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric'
+        });
+
+        return formatter.format(this.meetup.date);
+      } else
+        return '';
+    }
+
+  }
 };
