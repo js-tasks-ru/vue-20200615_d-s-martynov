@@ -41,11 +41,11 @@ export const MeetupsCalendar = {
 
   computed: {
     getFormattedSelectedDate() {
-      const formatter = new Intl.DateTimeFormat('ru', {
+      const formatter = new Intl.DateTimeFormat('en-us', {
         month: 'long',
         year: 'numeric'
       });
-      return formatter.format(this.selectedDate).replace(' г.', '').toLowerCase();
+      return formatter.format(this.selectedDate);
     },
     firstDate() {
       return addDay(this.selectedDate, -this.selectedDate.getDay() + 1);
