@@ -17,7 +17,7 @@ export const MeetupsCalendar = {
         </div>
       </div>
       <div class="rangepicker__date-grid">
-        <div v-for="item in calendarItems" :class="getCalendarItemClass(item.enabled)">
+        <div v-for="item in calendarItems" :class="{ rangepicker__cell: true, rangepicker__cell_inactive: !item.enabled }">
           {{ item.day }}
           <a v-for="meetup in item.meetups" class="rangepicker__event">{{ meetup.title }}</a>
         </div>
@@ -41,11 +41,11 @@ export const MeetupsCalendar = {
 
   computed: {
     getFormattedSelectedDate() {
-      const formatter = new Intl.DateTimeFormat('en-us', {
+      const formatter = new Intl.DateTimeFormat(navigator.language, {
         month: 'long',
         year: 'numeric'
       });
-      return formatter.format(this.selectedDate);
+      return formatter.format(this.selectedDate).replace(' г.', '');
     },
     firstDate() {
       return addDay(this.selectedDate, -this.selectedDate.getDay() + 1);
@@ -82,9 +82,5 @@ export const MeetupsCalendar = {
     prevMonth() {
       this.selectedDate = addMonth(this.selectedDate, -1);
     },
-    getCalendarItemClass(enabled) {
-      return 'rangepicker__cell' + (enabled === false ? ' rangepicker__cell_inactive' : '');
-    },
-
   }
 };
