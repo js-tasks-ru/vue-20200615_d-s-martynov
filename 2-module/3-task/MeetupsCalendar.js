@@ -2,6 +2,8 @@
   Полезные функции по работе с датой можно описать вне Vue компонента
  */
 
+import { addMonth, getDaysInMonth, addDay, compareDates } from './dateUtils.js';
+
 export const MeetupsCalendar = {
   name: 'MeetupsCalendar',
 
@@ -9,34 +11,80 @@ export const MeetupsCalendar = {
     <div class="rangepicker__calendar">
       <div class="rangepicker__month-indicator">
         <div class="rangepicker__selector-controls">
-          <button class="rangepicker__selector-control-left"></button>
-          <div>Июнь 2020</div>
-          <button class="rangepicker__selector-control-right"></button>
+          <button class="rangepicker__selector-control-left" @click="prevMonth"></button>
+          <div>{{ getFormattedSelectedDate }}</div>
+          <button class="rangepicker__selector-control-right" @click="nextMonth"></button>
         </div>
       </div>
       <div class="rangepicker__date-grid">
-        <div class="rangepicker__cell rangepicker__cell_inactive">28</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">29</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">30</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">31</div>
-        <div class="rangepicker__cell">
-          1
-          <a class="rangepicker__event">Митап</a>
-          <a class="rangepicker__event">Митап</a>
+        <div v-for="item in calendarItems" :class="getCalendarItemClass(item.enabled)">
+          {{ item.day }}
+          <a v-for="meetup in item.meetups" class="rangepicker__event">{{ meetup.title }}</a>
         </div>
-        <div class="rangepicker__cell">2</div>
-        <div class="rangepicker__cell">3</div>
       </div>
     </div>
   </div>`,
 
-  // Пропсы
+  props: {
+    meetups: {
+      type: Array,
+      required: true,
+      default: []
+    }
+  },
 
-  // В качестве локального состояния требуется хранить что-то,
-  // что позволит определить текущий показывающийся месяц.
-  // Изначально должен показываться текущий месяц
+  data() {
+    return {
+      selectedDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    }
+  },
 
-  // Вычислимые свойства помогут как с получением списка дней, так и с выводом информации
+  computed: {
+    getFormattedSelectedDate() {
+      const formatter = new Intl.DateTimeFormat('en-us', {
+        month: 'long',
+        year: 'numeric'
+      });
+      return formatter.format(this.selectedDate);
+    },
+    firstDate() {
+      return addDay(this.selectedDate, -this.selectedDate.getDay() + 1);
+    },
+    lastDate() {
+      const lastDateInMonth = new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth() + 1, 0);
+      const lastDayInMonth = lastDateInMonth.getDay();
+      if (lastDayInMonth !== 0)
+        return addDay(lastDateInMonth, 7 - lastDayInMonth);
+      else
+        return lastDateInMonth;
+    },
+    calendarItems() {
+      let items = [];
+      let curDay = new Date(this.firstDate);
+      while (curDay <= this.lastDate) {
+        let filteredMeetups = this.meetups.filter(item => item.date);
+        items.push({
+          date: new Date(curDay),
+          day: curDay.getDate(),
+          enabled: curDay.getMonth() === this.selectedDate.getMonth(),
+          meetups: this.meetups.filter(item => compareDates(item.date, curDay))
+        });
+        curDay = addDay(curDay, 1);
+      }
+      return items;
+    },
+  },
 
-  // Методы понадобятся для переключения между месяцами
+  methods: {
+    nextMonth() {
+      this.selectedDate = addMonth(this.selectedDate, 1);
+    },
+    prevMonth() {
+      this.selectedDate = addMonth(this.selectedDate, -1);
+    },
+    getCalendarItemClass(enabled) {
+      return 'rangepicker__cell' + (enabled === false ? ' rangepicker__cell_inactive' : '');
+    },
+
+  }
 };
