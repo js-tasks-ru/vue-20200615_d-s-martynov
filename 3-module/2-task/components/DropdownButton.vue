@@ -66,7 +66,6 @@ export default {
 
   methods: {
     selectOptionHandle(e) {
-      console.log(e);
       e.stopPropagation();
       this.showOptions = false;
       this.selectedValue = e.target.value;
