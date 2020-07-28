@@ -29,7 +29,7 @@ export default {
         toastType: toastType,
         message: message
       });
-      this.timerHandle = setTimeout(()=> {
+      setTimeout(()=> {
         if (this.toastList && this.toastList.length)
           this.toastList.splice(0, 1);
         }, DELAY);
